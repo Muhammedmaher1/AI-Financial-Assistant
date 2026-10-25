@@ -1,6 +1,6 @@
 const fs=require('fs'), vm=require('vm');
 const ctx={console}; vm.createContext(ctx);
-vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../apps-script/Code.gs'),'utf8')+';this.parseMessage=parseMessage;this.DEFAULT_RULES=DEFAULT_RULES;',ctx);
+vm.runInContext(fs.readFileSync(require('path').join(__dirname,'Code.gs'),'utf8')+';this.parseMessage=parseMessage;this.DEFAULT_RULES=DEFAULT_RULES;',ctx);
 const P=t=>ctx.parseMessage(t,ctx.DEFAULT_RULES);
 const cases=[
  ['دفعت 350 جنيه بنزين و120 جنيه قهوة و600 جنيه مشتريات للبيت',[[350,'Expense','Transportation','Fuel'],[120,'Expense','Food and Drinks','Coffee'],[600,'Expense','Household','Groceries']]],

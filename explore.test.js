@@ -15,7 +15,7 @@ const sheet={getLastRow:()=>T.length,getLastColumn:()=>18,getRange:(r,c,nr,nc)=>
 const props={DASH_KEY:'K'.repeat(40)};
 const ctx={console,Utilities,SpreadsheetApp:{getActive:()=>({getSheetByName:n=>n==='Transactions'?sheet:null})},PropertiesService:{getScriptProperties:()=>({getProperty:k=>props[k]||null})}};
 vm.createContext(ctx);
-vm.runInContext(['Code.gs','Phase3.gs','Phase6.gs'].map(f=>fs.readFileSync(require('path').join(__dirname,'../apps-script',f),'utf8')).join('\n')+';this.gs=getSpending;',ctx);
+vm.runInContext(['Code.gs','Phase3.gs','Phase6.gs'].map(f=>fs.readFileSync(require('path').join(__dirname,f),'utf8')).join('\n')+';this.gs=getSpending;',ctx);
 const K=props.DASH_KEY; const G=(a,b)=>JSON.parse(ctx.gs(K,a,b));
 let pass=0,total=0;const check=(n,c,x)=>{total++;if(c)pass++;console.log((c?'PASS ':'FAIL ')+n+(c||x===undefined?'':'  → '+x));};
 let X=G('2026-10-01','2026-10-12');

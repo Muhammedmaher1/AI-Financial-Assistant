@@ -9,7 +9,7 @@ const ctx={console,HtmlService,
  SpreadsheetApp:{getActive:()=>{if(global.SHEET_FAIL)throw new Error('SHEET_READ');return{getSheetByName:()=>({getLastRow:()=>2,getRange:()=>({getValues:()=>[['Dashboard_URL','https://script.google.com/macros/s/ABC/exec','']]})})};}},
  ScriptApp:{getService:()=>({getUrl:()=>'https://script.google.com/macros/s/ABC/exec'})}};
 vm.createContext(ctx);
-vm.runInContext(['Code.gs','Phase3.gs','Phase4.gs','Phase5.gs','Phase6.gs'].map(f=>fs.readFileSync(require('path').join(__dirname,'../apps-script',f),'utf8')).join('\n')+
+vm.runInContext(['Code.gs','Phase3.gs','Phase4.gs','Phase5.gs','Phase6.gs'].map(f=>fs.readFileSync(require('path').join(__dirname,f),'utf8')).join('\n')+
  ';getSettings=function(){return {Dashboard_URL:"https://script.google.com/macros/s/ABC/exec"}};this.api={doGet,getDashboardData,handleCommand6};',ctx);
 let pass=0,total=0;const check=(n,c,x)=>{total++;if(c)pass++;console.log((c?'PASS ':'FAIL ')+n+(c||x===undefined?'':' → '+x));};
 ctx.api.handleCommand6(111,'/dashboard','');

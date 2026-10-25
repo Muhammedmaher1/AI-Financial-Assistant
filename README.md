@@ -1,4 +1,4 @@
-# EGP Finance Assistant
+# AI-Financial-Assistant
 
 A personal finance assistant that runs entirely on free tools: a private **Telegram bot** records your spending in Arabic or English, a **Google Sheet** is the database, **Google Apps Script** does the work, and a private **mobile dashboard** shows where your money goes. Built for Egypt (EGP, Cairo time, Egyptian Arabic, Thndr).
 
@@ -34,22 +34,22 @@ iPhone ─► Telegram bot ─► Apps Script (polls every minute)
 
 | Path | What it is |
 |---|---|
-| `apps-script/Code.gs` | Core bot: message parsing, saving, undo, settings, menu |
-| `apps-script/Phase3.gs` | Calculation engine: Summary, Budgets, Commitments formulas, snapshots, insights |
-| `apps-script/Phase4.gs` | Commands (`/budget`, `/saving`, `/commitments`, `/goals`, `/export`) and daily alerts |
-| `apps-script/Phase5.gs` | Investments: portfolio, risk profile, allocation, Thndr cash sync |
-| `apps-script/Phase6.gs` + `Dashboard.html` | Private mobile dashboard and the Explore date filter |
-| `apps-script/Phase7.gs` | Monthly PDF report, email, checked AI commentary |
-| `apps-script/Import.gs` | Bulk import of past expenses from pasted notes |
-| `apps-script/appsscript.json` | Optional manifest (sets the Cairo time zone) |
-| `sheet-template/Finance_Database_template.xlsx` | Starting spreadsheet with clearly labelled example rows |
-| `tests/` | Automated checks that run with plain Node.js |
+| `Code.gs` | Core bot: message parsing, saving, undo, settings, menu |
+| `Phase3.gs` | Calculation engine: Summary, Budgets, Commitments formulas, snapshots, insights |
+| `Phase4.gs` | Commands (`/budget`, `/saving`, `/commitments`, `/goals`, `/export`) and daily alerts |
+| `Phase5.gs` | Investments: portfolio, risk profile, allocation, Thndr cash sync |
+| `Phase6.gs` + `Dashboard.html` | Private mobile dashboard and the Explore date filter |
+| `Phase7.gs` | Monthly PDF report, email, checked AI commentary |
+| `Import.gs` | Bulk import of past expenses from pasted notes |
+| `appsscript.json` | Optional manifest (sets the Cairo time zone) |
+| `Finance_Database_template.xlsx` | Starting spreadsheet with clearly labelled example rows |
+| `*.test.js`, `run-all.js` | Automated checks that run with plain Node.js |
 
 ## Setup
 
 You need a Google account and Telegram. Setup is easiest on a computer.
 
-1. **Create the sheet.** Upload `sheet-template/Finance_Database_template.xlsx` to Google Drive, open it, and choose **File › Save as Google Sheets**. Delete every row marked EXAMPLE.
+1. **Create the sheet.** Upload `Finance_Database_template.xlsx` to Google Drive, open it, and choose **File › Save as Google Sheets**. Delete every row marked EXAMPLE.
 2. **Create the bot.** In Telegram, message **@BotFather**, send `/newbot`, and copy the token.
 3. **Add the code.** In the sheet, open **Extensions › Apps Script**. Replace `Code.gs` with this repo's `Code.gs`, then add each of the other `.gs` files as a new **Script** with the same name, and `Dashboard.html` as a new **HTML** file named `Dashboard`.
 4. **Add your secrets** in **Project Settings › Script Properties** (never in the code):
@@ -89,7 +89,7 @@ After changing code later, publish it with **Deploy › Manage deployments › �
 ## Running the tests
 
 ```
-npm test        # or: node tests/run-all.js
+npm test        # or: node run-all.js
 ```
 
 The tests use mocked Google and Telegram services and run with Node.js 18+, no installs needed. They cover message parsing, the full bot flow, imports, the dashboard key and the Explore calculations. A few scenarios use fixed dates from October 2026 and assume the computer clock is close to that year. The spreadsheet-formula tests used during development (which recalculate the sheet with LibreOffice) are not included.
@@ -108,4 +108,4 @@ This is a personal budgeting tool, not financial advice. Allocation suggestions 
 
 ## License
 
-No license has been chosen yet. Until one is added, others may view the code but not reuse it. Add a `LICENSE` file (for example MIT) if you want people to be able to use it.
+Released under the [MIT License](LICENSE): you are free to use, change and share it.

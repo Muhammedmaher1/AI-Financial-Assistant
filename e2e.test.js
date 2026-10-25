@@ -33,7 +33,7 @@ const ctx={console,Utilities,UrlFetchApp,SpreadsheetApp:{getActive:()=>SS,getUi:
  CacheService:{getScriptCache:()=>({get:k=>cache[k]||null,put:(k,v)=>cache[k]=v,remove:k=>delete cache[k]})},
  LockService:{getScriptLock:()=>({tryLock:()=>true,releaseLock(){}})},
  ScriptApp:{getProjectTriggers:()=>[],deleteTrigger(){},newTrigger:()=>({timeBased:()=>({everyMinutes:()=>({create(){}})})})}};
-vm.createContext(ctx); vm.runInContext(fs.readFileSync(require('path').join(__dirname,'../apps-script/Code.gs'),'utf8')+fs.readFileSync(require('path').join(__dirname,'../apps-script/Phase3.gs'),'utf8')+fs.readFileSync(require('path').join(__dirname,'../apps-script/Phase4.gs'),'utf8')+';this.pollUpdates=pollUpdates;this.setup=setup;this.onEdit=onEdit;',ctx);
+vm.createContext(ctx); vm.runInContext(fs.readFileSync(require('path').join(__dirname,'Code.gs'),'utf8')+fs.readFileSync(require('path').join(__dirname,'Phase3.gs'),'utf8')+fs.readFileSync(require('path').join(__dirname,'Phase4.gs'),'utf8')+';this.pollUpdates=pollUpdates;this.setup=setup;this.onEdit=onEdit;',ctx);
 global.AI_REPLY='';
 let uid=1;
 const ME=111, STRANGER=999;

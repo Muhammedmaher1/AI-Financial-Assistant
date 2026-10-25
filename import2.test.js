@@ -25,7 +25,7 @@ const ctx={console,Utilities,SpreadsheetApp:{getActive:()=>SS},
   let res={ok:true,result:{message_id:5}}; if(m==='getFile')res.result={file_path:'docs/notes.txt'};
   return{getContentText:()=>JSON.stringify(res),getResponseCode:()=>200};}}};
 vm.createContext(ctx);
-vm.runInContext(['Code.gs','Phase3.gs','Phase4.gs','Phase5.gs','Phase6.gs','Phase7.gs','Import.gs'].map(f=>fs.readFileSync(require('path').join(__dirname,'../apps-script',f),'utf8')).join('\n')+
+vm.runInContext(['Code.gs','Phase3.gs','Phase4.gs','Phase5.gs','Phase6.gs','Phase7.gs','Import.gs'].map(f=>fs.readFileSync(require('path').join(__dirname,f),'utf8')).join('\n')+
  ';this.api={leadingDate_,parseImport_,processUpdate,DEFAULT_RULES,norm};',ctx);
 const api=ctx.api; const TODAY='2026-10-12';
 let pass=0,total=0;const check=(n,c,x)=>{total++;if(c)pass++;console.log((c?'PASS ':'FAIL ')+n+(c||x===undefined?'':'  → '+x));};

@@ -1,8 +1,9 @@
 {
-  "name": "egp-finance-assistant",
+  "name": "ai-financial-assistant",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "description": "Zero-cost personal finance assistant: Telegram bot + Google Sheets + Apps Script, built for Egypt (EGP).",
-  "scripts": { "test": "node tests/run-all.js" },
+  "scripts": { "test": "node run-all.js" },
   "engines": { "node": ">=18" }
 }
