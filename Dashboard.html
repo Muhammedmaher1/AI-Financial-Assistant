@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F7F9F8; --surface:#FFFFFF; --ink:#16201D; --muted:#5E6B67; --line:#DDE5E2;
+  --nile:#0F4C45; --nile-soft:#D5E7E3; --sand:#B89B5E; --ok:#2F7D55; --warn:#B7791F; --risk:#C2410C; --bad:#B42318;
+  --c-cash:#7FA7A0; --c-fi:#3E6E8E; --c-gold:#C9A227; --c-eg:#0F4C45; --c-for:#6B5CA5; --c-other:#9AA3A0;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0E1513; --surface:#16201D; --ink:#E7EEEB; --muted:#9AAAA5; --line:#2A3633;
+    --nile:#5FB3A5; --nile-soft:#1E3A35; --sand:#D2B77A; --ok:#5DBB8A; --warn:#E0A645; --risk:#F08A4B; --bad:#F2766B;
+    --c-eg:#5FB3A5; --c-fi:#6FA0C2; }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "IBM Plex Sans Arabic",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-variant-numeric:tabular-nums;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+main{max-width:560px;margin:0 auto;padding:20px 18px 40px}
+nav{display:flex;gap:18px;overflow-x:auto;padding:10px 18px;border-bottom:1px solid var(--line);
+  max-width:560px;margin:0 auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.navwrap{position:sticky;top:0;z-index:5;background:var(--bg)}
+.navwrap::after{content:"";position:absolute;right:0;top:0;bottom:1px;width:36px;background:linear-gradient(90deg,transparent,var(--bg));pointer-events:none}
+nav a{color:var(--muted);text-decoration:none;font-size:14px;white-space:nowrap;padding:4px 0}
+nav a:focus-visible,button:focus-visible{outline:2px solid var(--nile);outline-offset:2px}
+section{margin-top:34px;scroll-margin-top:56px}
+h2{font-size:19px;font-weight:600;margin:0 0 12px}
+.cycle{color:var(--muted);font-size:14px;margin:0}
+.hero{font-size:26px;line-height:1.3;font-weight:500;margin:6px 0 4px;letter-spacing:-.01em}
+.hero b{font-weight:700;color:var(--nile)}
+.pace{margin:0 0 10px;color:var(--muted)}
+.pace.over{color:var(--bad)}
+.runway{width:100%;height:auto;display:block}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:14px;height:0;border-top:2px solid;vertical-align:middle;margin-right:6px}
+.ledger{margin:0;border-top:1px solid var(--line)}
+.ledger div{display:flex;justify-content:space-between;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line)}
+.ledger dt{color:var(--muted)}
+.ledger dd{margin:0;font-weight:600}
+.ledger .total dt{color:var(--ink);font-weight:600}
+.ledger .total dd{color:var(--nile);font-size:18px}
+.sub{font-size:13px;color:var(--muted);font-weight:400}
+.neg{color:var(--bad)}
+.row{padding:10px 0;border-bottom:1px solid var(--line)}
+.row:first-child{border-top:1px solid var(--line)}
+.row-top{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.row-top span:last-child{white-space:nowrap}
+.bar{position:relative;height:8px;background:var(--nile-soft);border-radius:4px;margin-top:7px;overflow:visible}
+.bar>span{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--ok)}
+.bar>em{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.55}
+.st-Warning .bar>span{background:var(--warn)} .st-Likely-over .bar>span{background:var(--risk)} .st-Over .bar>span{background:var(--bad)}
+.note{font-size:13px;color:var(--muted);margin-top:4px}
+.bill{display:grid;grid-template-columns:18px 1fr auto;gap:10px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line)}
+.bill:first-child{border-top:1px solid var(--line)}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--muted);display:inline-block;transform:translateY(1px)}
+.dot.Paid{background:var(--ok);border-color:var(--ok)} .dot.Overdue{border-color:var(--bad);background:var(--bad)} .dot.Partial{border-color:var(--warn);background:linear-gradient(90deg,var(--warn) 50%,transparent 50%)}
+.dot.Not{opacity:.35}
+.alloc{display:flex;height:22px;border-radius:5px;overflow:hidden;margin:6px 0 2px}
+.alloc span{display:block;height:100%}
+.allocrow{display:grid;grid-template-columns:52px 1fr;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.allocrow .alloc{margin:4px 0}
+.cls{display:grid;grid-template-columns:12px 1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:15px}
+.cls i{width:12px;height:12px;border-radius:3px}
+.cls .tgt{color:var(--muted);min-width:64px;text-align:right}
+.hist{width:100%;height:auto;display:block}
+.ins{padding:10px 0 10px 14px;border-left:3px solid var(--line);margin-bottom:10px}
+.ins.High{border-color:var(--bad)} .ins.Medium{border-color:var(--warn)}
+.ins small{display:block;color:var(--muted);font-size:13px}
+.tx{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
+.tx .what{min-width:0}
+.tx .what>span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx .in{color:var(--ok)}
+.warn{background:var(--nile-soft);padding:10px 12px;border-radius:6px;font-size:14px;margin-top:14px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--nile);border-color:var(--nile);color:var(--bg)}
+.custom{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.custom input{font:inherit;font-size:15px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+.big{font-size:24px;font-weight:600;margin:4px 0 0}
+.chg{font-size:14px;margin:2px 0 12px}
+.chg.up{color:var(--risk)} .chg.down{color:var(--ok)}
+details.cat{border-bottom:1px solid var(--line)}
+details.cat:first-of-type{border-top:1px solid var(--line)}
+details.cat summary{list-style:none;cursor:pointer;padding:10px 0}
+details.cat summary::-webkit-details-marker{display:none}
+details.cat summary .cname::after{content:" ›";color:var(--muted)}
+details.cat[open] summary .cname::after{content:" ⌄"}
+details.cat .items{padding:0 0 10px 12px}
+details.cat .items .tx{font-size:14px;padding:6px 0}
+.exbars{width:100%;height:auto;display:block;margin:4px 0 14px}
+footer{margin-top:36px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px}
+button{font:inherit;font-size:14px;color:var(--nile);background:none;border:1px solid var(--line);border-radius:6px;padding:7px 14px;cursor:pointer}
+.loading{padding:80px 0;text-align:center;color:var(--muted)}
+.empty{color:var(--muted);font-size:15px}
+[dir=auto]{unicode-bidi:plaintext}
+@media (prefers-reduced-motion:no-preference){ .runway .actual{stroke-dasharray:1200;stroke-dashoffset:1200;animation:draw 1.1s ease-out forwards} @keyframes draw{to{stroke-dashoffset:0}} }
+</style>
+</head>
+<body>
+<div class="navwrap"><nav aria-label="Sections">
+  <a href="#overview">Overview</a><a href="#explore">Explore</a><a href="#budgets">Budgets</a><a href="#bills">Bills</a><a href="#invest">Investments</a><a href="#goals">Goals</a><a href="#trend">Trend</a><a href="#recent">Recent</a>
+</nav></div>
+<main id="app"><div class="loading">Loading your numbers…</div></main>
+<script>
+const KEY = "<?!= key ?>";
+const CLS_COLOR={'Cash-like':'var(--c-cash)','Fixed Income':'var(--c-fi)','Gold':'var(--c-gold)','Egypt Equity':'var(--c-eg)','Foreign Equity':'var(--c-for)','Other':'var(--c-other)'};
+const n=x=>Math.round(Number(x)||0).toLocaleString('en-US');
+const pct=x=>(Math.round((Number(x)||0)*1000)/10)+'%';
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtDay=k=>{if(!k)return'';const d=new Date(k+'T00:00:00Z');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',timeZone:'UTC'});};
+
+function runway(D){
+  const W=360,H=150,L=4,R=356,T=14,Bm=128, days=Math.max(1,D.s.days);
+  let cum=0; const pts=D.daily.map((x,i)=>{cum+=x.a;return [i+1,cum];});
+  const spent=cum, budget=D.budgetTotal, proj=D.s.projected;
+  const max=Math.max(budget,proj,spent,1)*1.08;
+  const X=d=>L+(R-L)*d/days, Y=v=>Bm-(Bm-T)*v/max;
+  const actual='M'+X(0)+','+Y(0)+' '+pts.map(p=>'L'+X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ');
+  const el=pts.length, over=proj>budget&&budget>0;
+  let s='<svg class="runway" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Spending so far against budget across the cycle">';
+  s+='<line x1="'+L+'" y1="'+Bm+'" x2="'+R+'" y2="'+Bm+'" stroke="var(--line)"/>';
+  if(budget>0) s+='<line x1="'+X(0)+'" y1="'+Y(0)+'" x2="'+X(days)+'" y2="'+Y(budget)+'" stroke="var(--sand)" stroke-width="2" stroke-dasharray="5 5"/>'
+     +'<text x="'+(R-2)+'" y="'+(proj>=budget?Y(budget)+16:Y(budget)-6)+'" text-anchor="end" font-size="11" fill="var(--sand)">budget '+n(budget)+'</text>';
+  if(el>0&&el<days) s+='<line x1="'+X(el)+'" y1="'+Y(spent)+'" x2="'+X(days)+'" y2="'+Y(proj)+'" stroke="'+(over?'var(--bad)':'var(--nile)')+'" stroke-width="2" stroke-dasharray="2 4" opacity=".8"/>'
+     +'<text x="'+(R-2)+'" y="'+(proj>=budget?Y(proj)-8:Y(proj)+16)+'" text-anchor="end" font-size="11" fill="'+(over?'var(--bad)':'var(--muted)')+'">likely '+n(proj)+'</text>';
+  s+='<path class="actual" d="'+actual+'" fill="none" stroke="var(--nile)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
+  if(el>0) s+='<circle cx="'+X(el)+'" cy="'+Y(spent)+'" r="4.5" fill="var(--nile)"/><line x1="'+X(el)+'" y1="'+(Bm)+'" x2="'+X(el)+'" y2="'+(Bm+6)+'" stroke="var(--muted)"/>'
+     +'<text x="'+X(el)+'" y="'+(Bm+19)+'" text-anchor="'+(el/days>0.85?'end':el/days<0.15?'start':'middle')+'" font-size="11" fill="var(--muted)">today</text>';
+  s+='<text x="'+L+'" y="'+(Bm+19)+'" font-size="11" fill="var(--muted)">'+fmtDay(D.start)+'</text><text x="'+R+'" y="'+(Bm+19)+'" text-anchor="end" font-size="11" fill="var(--muted)">'+fmtDay(D.end)+'</text>';
+  return s+'</svg>';
+}
+
+function history(H){
+  if(H.length<2) return '<p class="empty">Your cycle history starts building after your first month-end snapshot.</p>';
+  const W=360,Hh=150,T=10,Bm=120,max=Math.max(1,...H.map(h=>Math.max(h.income,h.spent)))*1.05, gw=(W-8)/H.length, bw=Math.min(16,gw/3);
+  let s='<svg class="hist" viewBox="0 0 '+W+' '+Hh+'" role="img" aria-label="Income and spending by cycle">';
+  H.forEach((h,i)=>{const x=4+i*gw+gw/2, y=v=>Bm-(Bm-T)*v/max;
+    s+='<rect x="'+(x-bw-1)+'" y="'+y(h.income)+'" width="'+bw+'" height="'+(Bm-y(h.income))+'" rx="2" fill="var(--nile-soft)"/>'
+     +'<rect x="'+(x+1)+'" y="'+y(h.spent)+'" width="'+bw+'" height="'+(Bm-y(h.spent))+'" rx="2" fill="'+(h.current?'var(--sand)':'var(--nile)')+'"/>'
+     +'<text x="'+x+'" y="'+(Bm+15)+'" text-anchor="middle" font-size="11" fill="var(--muted)">'+esc(h.label)+'</text>'
+     +'<text x="'+x+'" y="'+(Bm+29)+'" text-anchor="middle" font-size="11" fill="'+(h.srate<0?'var(--bad)':'var(--ink)')+'">'+(h.income?pct(h.srate):'–')+'</text>';});
+  return s+'</svg><div class="legend"><span><i style="border-color:var(--nile-soft);border-top-width:8px"></i>Income</span><span><i style="border-color:var(--nile);border-top-width:8px"></i>Spending</span><span>Bottom row: savings rate</span></div>';
+}
+
+function render(json){
+  const D=typeof json==='string'?JSON.parse(json):json, s=D.s;
+  const left=Math.max(0,s.days-s.elapsed), over=D.budgetTotal>0&&s.projected>D.budgetTotal;
+  let h='';
+  h+='<section id="overview" style="margin-top:6px"><p class="cycle">Cycle '+fmtDay(D.start)+' to '+fmtDay(D.end)+'</p>';
+  h+='<p class="hero">You’ve spent <b>'+n(s.consumption)+' EGP</b>'+(D.budgetTotal?' of your '+n(D.budgetTotal)+' budget':'')+', with '+left+' day'+(left===1?'':'s')+' to go.</p>';
+  h+='<p class="pace'+(over?' over':'')+'">'+(over?'At this pace you’ll end near '+n(s.projected)+', '+n(s.projected-D.budgetTotal)+' over budget.':'At this pace you’ll end near '+n(s.projected)+(D.budgetTotal?', within budget.':'.'))+'</p>';
+  h+=runway(D);
+  h+='<div class="legend"><span><i style="border-color:var(--nile)"></i>Spent so far</span><span><i style="border-color:var(--sand);border-top-style:dashed"></i>Even pace to budget</span></div>';
+  D.warnings.forEach(w=>{h+='<div class="warn">'+esc(w)+'</div>';});
+  h+='<dl class="ledger" style="margin-top:22px">'
+    +'<div><dt>Income this cycle</dt><dd>'+n(s.income)+'</dd></div>'
+    +'<div><dt>Saved and invested</dt><dd>'+n(s.netsaved)+'</dd></div>'
+    +'<div><dt>Savings rate</dt><dd class="'+(s.srate<0?'neg':'')+'">'+(s.income?pct(s.srate):'<span class="sub">no income yet</span>')+'</dd></div>'
+    +'<div><dt>Bills still due</dt><dd>'+n(s.due)+'</dd></div>'
+    +'<div><dt>Estimated cash</dt><dd>'+n(s.cash)+'</dd></div>'
+    +'<div><dt>Net worth</dt><dd>'+n(s.networth)+'</dd></div>'
+    +'<div class="total"><dt>Free to invest now</dt><dd>'+n(s.free)+'</dd></div></dl>';
+  if(s.surplus>0&&s.free<s.surplus) h+='<p class="note">Of '+n(s.surplus)+' available: '+n(s.toef)+' to your emergency fund'+(s.togoals?', '+n(s.togoals)+' to goals':'')+' first.</p>';
+  h+='</section>';
+
+  h+='<section id="explore"><h2>Explore spending</h2><div class="chips" role="group" aria-label="Period">'
+    +[['cycle','This cycle'],['last','Last cycle'],['30','Last 30 days'],['90','Last 3 months'],['year','This year'],['custom','Custom']]
+      .map(p=>'<button class="chip" data-p="'+p[0]+'" aria-pressed="'+(EX.preset===p[0])+'">'+p[1]+'</button>').join('')
+    +'</div><div class="custom" id="exCustom" style="display:'+(EX.preset==='custom'?'flex':'none')+'"><input type="date" id="exFrom" aria-label="From"><span class="sub">to</span><input type="date" id="exTo" aria-label="To"><button onclick="applyCustom()">Show</button></div>'
+    +'<div id="exOut" class="empty">Loading…</div></section>';
+
+  h+='<section id="budgets"><h2>Budgets</h2>';
+  if(!D.budgets.length) h+='<p class="empty">Set monthly amounts on the Budgets tab to track them here.</p>';
+  const idle=D.budgets.filter(b=>b.actual===0&&!(b.projected>0.5));
+  D.budgets.filter(b=>idle.indexOf(b)<0).forEach(b=>{const w=b.budget?Math.min(100,b.actual/b.budget*100):100, pj=b.budget?Math.min(100,b.projected/b.budget*100):0;
+    h+='<div class="row st-'+esc(b.status).replace(/\s+/g,'-')+'"><div class="row-top"><span>'+esc(b.cat)+'</span><span>'+n(b.actual)+' <span class="sub">/ '+n(b.budget)+'</span></span></div>'
+      +'<div class="bar"><span style="width:'+w+'%"></span>'+(b.budget&&b.projected>b.actual+0.5?'<em style="left:calc('+pj+'% - 1px)" title="projected"></em>':'')+'</div>'
+      +(b.status==='Over'?'<div class="note neg">Over by '+n(b.actual-b.budget)+'</div>':b.status==='Likely over'?'<div class="note">Likely to reach '+n(b.projected)+'</div>':'')+'</div>';});
+  if(idle.length) h+='<p class="note">Nothing spent yet: '+idle.map(b=>esc(b.cat)).join(', ')+'.</p>';
+  if(D.budgets.length>idle.length) h+='<p class="note">The thin mark shows where a category is likely to end.</p>';
+  h+='</section>';
+
+  h+='<section id="bills"><h2>Bills this cycle</h2>';
+  if(!D.bills.length) h+='<p class="empty">Add recurring bills on the Commitments tab.</p>';
+  D.bills.forEach(b=>{const st=b.status==='Not this cycle'?'Not':b.status;
+    h+='<div class="bill"><span class="dot '+esc(st)+'" aria-hidden="true"></span><span dir="auto">'+esc(b.name)+'<br><span class="sub">'+esc(b.status==='Paid'?'Paid':b.status==='Not this cycle'?'Not due this cycle':b.status+(b.due?', due '+fmtDay(b.due):''))+'</span></span><span>'+n(b.status==='Partial'?b.remaining:b.amount)+'</span></div>';});
+  h+='</section>';
+
+  h+='<section id="invest"><h2>Investments</h2>';
+  const P=D.portfolio;
+  if(!P||!P.value) h+='<p class="empty">Add your Thndr holdings on the Holdings tab, or use /buy in the bot.</p>';
+  else{
+    h+='<dl class="ledger"><div><dt>Portfolio value</dt><dd>'+n(P.value)+'</dd></div><div><dt>Unrealized gain</dt><dd class="'+(P.unreal<0?'neg':'')+'">'+(P.unreal>=0?'+':'')+n(P.unreal)+' <span class="sub">'+pct(P.unrealpct)+'</span></dd></div>'
+      +(P.thndrcash?'<div><dt>Uninvested in Thndr</dt><dd>'+n(P.thndrcash)+'</dd></div>':'')+'</dl>';
+    const cl=P.classes.filter(c=>c.value>0||c.target>0);
+    const bar=(k)=>'<div class="alloc">'+cl.filter(c=>c[k]>0).map(c=>'<span style="width:'+(c[k]*100)+'%;background:'+CLS_COLOR[c.cls]+'"></span>').join('')+'</div>';
+    h+='<div class="allocrow" role="img" aria-label="Current allocation"><span>Now</span>'+bar('pct')+'</div>';
+    if(P.profile) h+='<div class="allocrow" role="img" aria-label="Target allocation"><span>Target</span>'+bar('target')+'</div>';
+    cl.forEach(c=>{h+='<div class="cls"><i style="background:'+CLS_COLOR[c.cls]+'"></i><span>'+esc(c.cls)+'</span><span>'+pct(c.pct)+'</span><span class="tgt">'+(P.profile?'target '+Math.round(c.target*100)+'%':'')+'</span></div>';});
+    h+='<p class="note">'+(P.profile?'Target mix: '+esc(P.profile)+'.':'Send /risk in the bot to set a target mix.')
+      +(P.oldest?' Oldest price: '+fmtDay(P.oldest)+'.':'')+'</p>';
+    if(P.profile&&P.newmoney>0) h+='<p class="note">For this cycle’s '+n(P.newmoney)+' free to invest: '+P.classes.filter(c=>c.suggested>=1).map(c=>esc(c.cls)+' '+n(c.suggested)).join(', ')+'.</p>';
+  }
+  h+='</section>';
+
+  h+='<section id="goals"><h2>Goals</h2>';
+  if(!D.goals.length) h+='<p class="empty">Add goals on the Goals tab to see progress here.</p>';
+  D.goals.forEach(g=>{h+='<div class="row"><div class="row-top"><span dir="auto">'+esc(g.name)+'</span><span>'+Math.round(g.pct*100)+'%</span></div>'
+    +'<div class="bar"><span style="width:'+Math.min(100,g.pct*100)+'%;background:var(--nile)"></span></div>'
+    +'<div class="note">'+n(g.current)+' of '+n(g.target)+'. Needs '+n(g.monthly)+' a month for '+g.months+' months.</div></div>';});
+  h+='</section>';
+
+  h+='<section id="trend"><h2>Cycle by cycle</h2>'+history(D.history)+'</section>';
+
+  if(D.insights.length){h+='<section><h2>Worth a look</h2>';
+    D.insights.forEach(i=>{h+='<div class="ins '+esc(i.sev)+'"><small>'+esc(i.type)+'</small><span dir="auto">'+esc(i.detail)+'</span></div>';});
+    h+='</section>';}
+
+  h+='<section id="recent"><h2>Recent</h2>';
+  if(!D.recent.length) h+='<p class="empty">Send your first expense to the bot, like “دفعت 50 قهوة”.</p>';
+  D.recent.forEach(r=>{const inflow=['Income','Refund','Investment Withdrawal','Investment Return'].indexOf(r.t)>=0;
+    h+='<div class="tx"><div class="what"><span dir="auto">'+esc(r.desc||r.cat)+'</span><span class="sub">'+fmtDay(r.d)+(r.t!=='Expense'?', '+esc(r.t):'')+'</span></div><span class="'+(inflow?'in':'')+'">'+(inflow?'+':'')+n(r.a)+(r.cur!=='EGP'?' '+esc(r.cur):'')+'</span></div>';});
+  h+='</section>';
+  h+='<footer><span>Updated '+esc(D.generated)+'</span><button onclick="load()">Refresh</button></footer>';
+  document.getElementById('app').innerHTML=h;
+  DASH=D;
+  document.querySelectorAll('#explore .chip').forEach(b=>b.addEventListener('click',()=>pickPreset(b.dataset.p)));
+  pickPreset(EX.preset,true);
+}
+
+// ---------- Explore: spending for any period ----------
+let DASH=null; const EX={preset:'cycle',from:'',to:''};
+const addD=(k,n)=>{const d=new Date(k+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
+function presetRange(p){const t=DASH.today;
+  if(p==='cycle')return[DASH.cycleStart||DASH.start,t]; if(p==='last')return[DASH.prevStart,DASH.prevEnd];
+  if(p==='30')return[addD(t,-29),t]; if(p==='90')return[addD(t,-89),t]; if(p==='year')return[t.slice(0,4)+'-01-01',t];
+  return[EX.from||addD(t,-29),EX.to||t];}
+function pickPreset(p,silent){
+  EX.preset=p;
+  document.querySelectorAll('#explore .chip').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.p===p)));
+  const r=presetRange(p); EX.from=r[0]; EX.to=r[1];
+  const c=document.getElementById('exCustom'); c.style.display=p==='custom'?'flex':'none';
+  document.getElementById('exFrom').value=EX.from; document.getElementById('exTo').value=EX.to;
+  if(p==='custom'&&!silent)return; // wait for "Show"
+  loadExplore();
+}
+function applyCustom(){const f=document.getElementById('exFrom').value,t=document.getElementById('exTo').value;
+  if(!f||!t||f>t){document.getElementById('exOut').innerHTML='<p class="empty">Choose a start date before the end date.</p>';return;}
+  EX.from=f;EX.to=t;loadExplore();}
+function loadExplore(){
+  const out=document.getElementById('exOut'); out.innerHTML='<p class="empty">Loading…</p>';
+  google.script.run.withSuccessHandler(renderExplore).withFailureHandler(e=>{out.innerHTML='<p class="empty">'+esc(e&&e.message||e)+'</p>';}).getSpending(KEY,EX.from,EX.to);
+}
+function exBars(X){
+  const B=X.buckets; if(!B.length) return '';
+  const W=360,H=110,T=8,Bm=88,max=Math.max(1,...B.map(b=>b.amount)),gw=(W-4)/B.length,bw=Math.max(2,Math.min(22,gw*0.7));
+  const lab=b=>X.gran==='month'?new Date(b.from+'T00:00:00Z').toLocaleDateString('en-GB',{month:'short',timeZone:'UTC'}):fmtDay(b.from);
+  let s='<svg class="exbars" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Spending by '+X.gran+'">';
+  B.forEach((b,i)=>{const v=Math.max(0,b.amount),h=v>0?Math.max(3,(Bm-T)*v/max):0,x=2+i*gw+(gw-bw)/2; // small days stay visible
+    s+='<rect x="'+x.toFixed(1)+'" y="'+(Bm-h).toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+(v===max&&v>0?'var(--sand)':'var(--nile)')+'"><title>'+lab(b)+': '+n(b.amount)+'</title></rect>';});
+  s+='<line x1="0" y1="'+Bm+'" x2="'+W+'" y2="'+Bm+'" stroke="var(--line)"/>';
+  s+='<text x="2" y="'+(Bm+16)+'" font-size="11" fill="var(--muted)">'+lab(B[0])+'</text><text x="'+(W-2)+'" y="'+(Bm+16)+'" text-anchor="end" font-size="11" fill="var(--muted)">'+lab(B[B.length-1])+'</text>';
+  s+='<text x="'+(W-2)+'" y="'+(T+4)+'" text-anchor="end" font-size="11" fill="var(--sand)">peak '+n(max)+'</text>';
+  return s+'</svg>';
+}
+function renderExplore(json){
+  const X=typeof json==='string'?JSON.parse(json):json, out=document.getElementById('exOut'); out.className='';
+  let h='<p class="cycle">'+fmtDay(X.from)+(X.from.slice(0,4)!==X.to.slice(0,4)?' '+X.from.slice(0,4):'')+' to '+fmtDay(X.to)+' '+X.to.slice(0,4)+', '+X.days+' day'+(X.days===1?'':'s')+'</p>';
+  h+='<p class="big">'+n(X.total)+' EGP spent</p>';
+  if(X.change!==null&&Math.abs(X.change)<0.005) h+='<p class="chg sub">Same as the '+X.days+' days before ('+n(X.prevTotal)+')</p>';
+  else if(X.change!==null){const up=X.change>0;h+='<p class="chg '+(up?'up':'down')+'">'+(up?'▲ ':'▼ ')+Math.abs(Math.round(X.change*100))+'% vs the '+X.days+' days before ('+n(X.prevTotal)+')</p>';}
+  else h+='<p class="chg sub">No spending recorded in the '+X.days+' days before, so no comparison.</p>';
+  if(!X.count&&!X.refunds){out.innerHTML=h+'<p class="empty">No expenses in this period.</p>';return;}
+  h+=exBars(X);
+  h+='<dl class="ledger"><div><dt>Expenses</dt><dd>'+X.count+'</dd></div><div><dt>Daily average</dt><dd>'+n(X.dailyAvg)+'</dd></div>'
+    +(X.refunds?'<div><dt>Refunds (already subtracted)</dt><dd>'+n(X.refunds)+'</dd></div>':'')
+    +'<div><dt>Income in this period</dt><dd>'+n(X.income)+'</dd></div></dl>';
+  h+='<h2 style="margin-top:22px;font-size:16px">By category</h2>';
+  X.cats.forEach(c=>{const its=X.items.filter(i=>i.cat===c.cat);
+    h+='<details class="cat"><summary><div class="row-top"><span><span class="cname">'+esc(c.cat)+'</span> <span class="sub">'+c.count+'×</span></span><span>'+n(c.amount)+' <span class="sub">'+Math.round(c.share*100)+'%</span></span></div>'
+      +'<div class="bar"><span style="width:'+Math.max(0,Math.min(100,c.share*100))+'%;background:var(--nile)"></span></div>'
+      +(c.prev>0?'<div class="note">Before: '+n(c.prev)+'</div>':'')+'</summary><div class="items">'
+      +its.slice(0,60).map(i=>'<div class="tx"><div class="what"><span dir="auto">'+esc(i.desc||c.cat)+'</span><span class="sub">'+fmtDay(i.d)+(i.t==='Refund'?', refund':'')+'</span></div><span class="'+(i.a<0?'in':'')+'">'+(i.a<0?'+':'')+n(Math.abs(i.a))+'</span></div>').join('')
+      +(its.length>60?'<p class="note">…and '+(its.length-60)+' more</p>':'')+'</div></details>';});
+  if(X.largest.length){h+='<h2 style="margin-top:22px;font-size:16px">Largest expenses</h2>';
+    X.largest.forEach(i=>{h+='<div class="tx"><div class="what"><span dir="auto">'+esc(i.desc||i.cat)+'</span><span class="sub">'+fmtDay(i.d)+', '+esc(i.cat)+'</span></div><span>'+n(i.a)+'</span></div>';});}
+  if(X.truncated) h+='<p class="note">Showing the first 400 transactions in the lists; totals include everything.</p>';
+  if(X.skipped) h+='<p class="note">'+X.skipped+' non-EGP expense(s) are not included in these totals.</p>';
+  h+='<p class="note">Tap a category to see its expenses.</p>';
+  out.innerHTML=h;
+}
+// Section links scroll inside the page (Apps Script shows the page inside a frame, so plain #links misbehave)
+document.querySelector('nav').addEventListener('click',e=>{
+  const a=e.target.closest('a'); if(!a) return;
+  e.preventDefault();
+  const el=document.getElementById(a.getAttribute('href').slice(1));
+  if(!el) return;
+  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const top=el.getBoundingClientRect().top+window.pageYOffset-52;
+  window.scrollTo({top:Math.max(0,top),behavior:reduce?'auto':'smooth'});
+});
+function fail(e){document.getElementById('app').innerHTML='<div class="loading">Couldn’t load your data: '+esc(e&&e.message||e)+'<br><br><button onclick="load()">Try again</button></div>';}
+function load(){ if(window.google&&google.script) google.script.run.withSuccessHandler(render).withFailureHandler(fail).getDashboardData(KEY); }
+load();
+</script>
+</body>
+</html>
